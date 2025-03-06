@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contactForm");
     const contactList = document.getElementById("contactList");
+    let addressBook = JSON.parse(localStorage.getItem("addressBook")) || []; // Initialize from localStorage
 
     contactForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -18,7 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             validateContact(contact);
-            saveContact(contact);
+            addressBook.push(contact); // Add to array
+            localStorage.setItem("addressBook", JSON.stringify(addressBook)); // Save in localStorage
             displayContacts();
             contactForm.reset();
             alert("Contact added successfully!");
@@ -28,11 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function validateContact(contact) {
-        const namePattern = /^[A-Z][a-zA-Z]{2,}$/; // Capital first letter, min 3 characters
-        const addressPattern = /^.{4,}$/; // Min 4 characters
-        const zipPattern = /^[0-9]{5}$/; // 5-digit zip code
-        const phonePattern = /^[0-9]{10}$/; // 10-digit phone number
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Valid email format
+        const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
+        const addressPattern = /^.{4,}$/;
+        const zipPattern = /^[0-9]{5}$/;
+        const phonePattern = /^[0-9]{10}$/;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         if (!namePattern.test(contact.firstName)) throw "Invalid First Name (Min 3 chars, start with capital)";
         if (!namePattern.test(contact.lastName)) throw "Invalid Last Name (Min 3 chars, start with capital)";
@@ -44,17 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!emailPattern.test(contact.email)) throw "Invalid Email Address";
     }
 
-    function saveContact(contact) {
-        let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-        contacts.push(contact);
-        localStorage.setItem("contacts", JSON.stringify(contacts));
-    }
-
     function displayContacts() {
         contactList.innerHTML = "";
-        const contacts = JSON.parse(localStorage.getItem("contacts")) || [];
-
-        contacts.forEach((contact, index) => {
+        addressBook.forEach((contact, index) => {
             let li = document.createElement("li");
             li.textContent = `${contact.firstName} ${contact.lastName} - ${contact.phone}`;
             contactList.appendChild(li);
