@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contactForm");
     const contactList = document.getElementById("contactList");
-    let addressBook = JSON.parse(localStorage.getItem("addressBook")) || []; // Initialize from localStorage
+    let addressBook = JSON.parse(localStorage.getItem("addressBook")) || [];
 
     contactForm.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             validateContact(contact);
-            addressBook.push(contact); // Add to array
-            localStorage.setItem("addressBook", JSON.stringify(addressBook)); // Save in localStorage
+            addressBook.push(contact);
+            localStorage.setItem("addressBook", JSON.stringify(addressBook));
             displayContacts();
             contactForm.reset();
             alert("Contact added successfully!");
@@ -51,8 +51,27 @@ document.addEventListener("DOMContentLoaded", () => {
         addressBook.forEach((contact, index) => {
             let li = document.createElement("li");
             li.textContent = `${contact.firstName} ${contact.lastName} - ${contact.phone}`;
+
+            let editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.onclick = () => editContact(index);
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.onclick = () => deleteContact(index);
+
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
             contactList.appendChild(li);
         });
+    }
+
+    function deleteContact(index) {
+        if (confirm("Are you sure you want to delete this contact?")) {
+            addressBook.splice(index, 1);
+            localStorage.setItem("addressBook", JSON.stringify(addressBook));
+            displayContacts();
+        }
     }
 
     displayContacts();
