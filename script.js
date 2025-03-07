@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contactForm");
     const contactList = document.getElementById("contactList");
+    const contactCount = document.getElementById("contactCount"); // For displaying count
     let addressBook = JSON.parse(localStorage.getItem("addressBook")) || [];
 
     contactForm.addEventListener("submit", function (event) {
@@ -29,23 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function validateContact(contact) {
-        const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
-        const addressPattern = /^.{4,}$/;
-        const zipPattern = /^[0-9]{5}$/;
-        const phonePattern = /^[0-9]{10}$/;
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-        if (!namePattern.test(contact.firstName)) throw "Invalid First Name (Min 3 chars, start with capital)";
-        if (!namePattern.test(contact.lastName)) throw "Invalid Last Name (Min 3 chars, start with capital)";
-        if (!addressPattern.test(contact.address)) throw "Invalid Address (Min 4 characters)";
-        if (!addressPattern.test(contact.city)) throw "Invalid City (Min 4 characters)";
-        if (!addressPattern.test(contact.state)) throw "Invalid State (Min 4 characters)";
-        if (!zipPattern.test(contact.zip)) throw "Invalid Zip Code (Must be 5 digits)";
-        if (!phonePattern.test(contact.phone)) throw "Invalid Phone Number (Must be 10 digits)";
-        if (!emailPattern.test(contact.email)) throw "Invalid Email Address";
-    }
-
     function displayContacts() {
         contactList.innerHTML = "";
         addressBook.forEach((contact, index) => {
@@ -64,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
             li.appendChild(deleteBtn);
             contactList.appendChild(li);
         });
+
+        updateContactCount(); // Update count when displaying contacts
     }
 
     function deleteContact(index) {
@@ -72,6 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.setItem("addressBook", JSON.stringify(addressBook));
             displayContacts();
         }
+    }
+
+    function updateContactCount() {
+        const count = addressBook.reduce((total) => total + 1, 0);
+        contactCount.textContent = `Total Contacts: ${count}`;
     }
 
     displayContacts();
