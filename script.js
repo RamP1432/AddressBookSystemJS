@@ -9,8 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateContact(contact) {
         
         const zipRegex = /^[1-9][0-9]{5}$/;
-        
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
         if (!zipRegex.test(contact.zip)) throw "Invalid ZIP Code!";
+        if (!emailRegex.test(contact.email)) throw "Invalid Email!";
+
         
     }
 
