@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contactForm");
     const contactList = document.getElementById("contactList");
     const contactCount = document.getElementById("contactCount");
+    const viewInput = document.getElementById("viewInput");
+    const viewResults = document.getElementById("viewResults");
     let addressBook = JSON.parse(localStorage.getItem("addressBook")) || [];
 
     contactForm.addEventListener("submit", function (event) {
@@ -20,8 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             validateContact(contact);
-            
-            // **Duplicate Check using filter**
+
             const isDuplicate = addressBook
                 .filter(person => 
                     person.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         contactList.innerHTML = "";
         addressBook.forEach((contact, index) => {
             let li = document.createElement("li");
-            li.textContent = `${contact.firstName} ${contact.lastName} - ${contact.phone}`;
+            li.textContent = `${contact.firstName} ${contact.lastName} - ${contact.city}, ${contact.state}`;
 
             let editBtn = document.createElement("button");
             editBtn.textContent = "Edit";
@@ -62,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
             contactList.appendChild(li);
         });
 
-        updateContactCount(); // Update count when displaying contacts
+        updateContactCount();
     }
 
     function deleteContact(index) {
@@ -74,8 +75,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateContactCount() {
-        const count = addressBook.reduce(total => total + 1, 0);
+        const count = addressBook.reduce((total) => total + 1, 0);
         contactCount.textContent = `Total Contacts: ${count}`;
+    }
+
+    function viewPersonsByCityOrState() {
+        const query = viewInput.value.trim().toLowerCase();
+        if (!query) {
+            alert("Please enter a city or state to view contacts.");
+            return;
+        }
+
+        const results = addressBook.filter(contact =>
+            contact.city.toLowerCase() === query || contact.state.toLowerCase() === query
+        );
+
+        viewResults.innerHTML = results.length 
+            ? results.map(contact => `<li>${contact.firstName} ${contact.lastName} - ${contact.city}, ${contact.state}</li>`).join("")
+            : "<li>No contacts found</li>";
+
+        alert(`Found ${results.reduce(total => total + 1, 0)} contact(s) in '${query}'`);
     }
 
     displayContacts();
