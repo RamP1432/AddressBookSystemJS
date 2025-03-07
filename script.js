@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contactForm");
     const contactList = document.getElementById("contactList");
-    const contactCount = document.getElementById("contactCount"); // For displaying count
+    const contactCount = document.getElementById("contactCount");
     let addressBook = JSON.parse(localStorage.getItem("addressBook")) || [];
 
     contactForm.addEventListener("submit", function (event) {
@@ -20,6 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             validateContact(contact);
+            
+            // **Duplicate Check using filter**
+            const isDuplicate = addressBook
+                .filter(person => 
+                    person.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
+                    person.lastName.toLowerCase() === contact.lastName.toLowerCase()
+                ).length > 0;
+
+            if (isDuplicate) {
+                alert("Duplicate Entry! This contact already exists.");
+                return;
+            }
+
             addressBook.push(contact);
             localStorage.setItem("addressBook", JSON.stringify(addressBook));
             displayContacts();
@@ -61,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateContactCount() {
-        const count = addressBook.reduce((total) => total + 1, 0);
+        const count = addressBook.reduce(total => total + 1, 0);
         contactCount.textContent = `Total Contacts: ${count}`;
     }
 
