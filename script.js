@@ -115,6 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("countResult").textContent = 
             `Total contacts in '${query}': ${totalCount}`;
     }
+
+    function sortContacts() {
+        const criteria = document.getElementById("sortBy").value;
+        
+        if (!criteria) {
+            alert("Please select a sorting criteria.");
+            return;
+        }
+    
+        // Sort addressBook based on selected criteria
+        const sortedContacts = [...addressBook].sort((a, b) => {
+            return a[criteria].localeCompare(b[criteria]);
+        });
+    
+        // Display sorted results
+        const sortedList = document.getElementById("sortedResults");
+        sortedList.innerHTML = sortedContacts
+            .map(contact => `<li>${contact.firstName} ${contact.lastName} - ${contact[criteria]}</li>`)
+            .join("");
+    }
+    
     
 
     displayContacts();
