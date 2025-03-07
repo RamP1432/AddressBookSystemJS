@@ -96,6 +96,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alert(`Found ${results.reduce(total => total + 1, 0)} contact(s) in '${query}'`);
     }
+    function countContactsByCityOrState() {
+        const query = document.getElementById("countInput").value.trim().toLowerCase();
+        if (!query) {
+            alert("Please enter a city or state to count.");
+            return;
+        }
+    
+        // Filter contacts matching the city or state
+        const matchingContacts = addressBook.filter(contact =>
+            contact.city.toLowerCase() === query || contact.state.toLowerCase() === query
+        );
+    
+        // Get total count using reduce
+        const totalCount = matchingContacts.reduce(total => total + 1, 0);
+    
+        // Display result
+        document.getElementById("countResult").textContent = 
+            `Total contacts in '${query}': ${totalCount}`;
+    }
+    
 
     displayContacts();
 });
