@@ -6,6 +6,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewResults = document.getElementById("viewResults");
     let addressBook = JSON.parse(localStorage.getItem("addressBook")) || [];
 
+    function validateContact(contact) {
+        
+        const zipRegex = /^[1-9][0-9]{5}$/;
+        
+        if (!zipRegex.test(contact.zip)) throw "Invalid ZIP Code!";
+        
+    }
+
     contactForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -23,11 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             validateContact(contact);
 
-            const isDuplicate = addressBook
-                .filter(person => 
-                    person.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
-                    person.lastName.toLowerCase() === contact.lastName.toLowerCase()
-                ).length > 0;
+            const isDuplicate = addressBook.some(person => 
+                person.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
+                person.lastName.toLowerCase() === contact.lastName.toLowerCase()
+            );
 
             if (isDuplicate) {
                 alert("Duplicate Entry! This contact already exists.");
@@ -96,22 +103,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alert(`Found ${results.reduce(total => total + 1, 0)} contact(s) in '${query}'`);
     }
+
     function countContactsByCityOrState() {
         const query = document.getElementById("countInput").value.trim().toLowerCase();
         if (!query) {
             alert("Please enter a city or state to count.");
             return;
         }
-    
-        // Filter contacts matching the city or state
+
         const matchingContacts = addressBook.filter(contact =>
             contact.city.toLowerCase() === query || contact.state.toLowerCase() === query
         );
-    
-        // Get total count using reduce
+
         const totalCount = matchingContacts.reduce(total => total + 1, 0);
-    
-        // Display result
+
         document.getElementById("countResult").textContent = 
             `Total contacts in '${query}': ${totalCount}`;
     }
@@ -124,19 +129,15 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
     
-        // Sort addressBook based on selected criteria
         const sortedContacts = [...addressBook].sort((a, b) => {
             return a[criteria].localeCompare(b[criteria]);
         });
     
-        // Display sorted results
         const sortedList = document.getElementById("sortedResults");
         sortedList.innerHTML = sortedContacts
             .map(contact => `<li>${contact.firstName} ${contact.lastName} - ${contact[criteria]}</li>`)
             .join("");
     }
     
-    
-
     displayContacts();
 });
